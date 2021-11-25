@@ -5,6 +5,8 @@ import { ConnectionOptions } from 'typeorm';
 import appConfig from './config/app.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { GameModule } from './game/game.module';
+import { PublisherModule } from './publisher/publisher.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { AppService } from './app.service';
       },
       inject: [ConfigService],
   }),
+    GameModule,
+    PublisherModule,
   ],
   controllers: [AppController],
   providers: [AppService],
