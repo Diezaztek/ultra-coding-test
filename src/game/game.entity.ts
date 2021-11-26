@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from 'typeorm';
-import { Publisher } from 'src/publisher/publisher.entity';
+import { Entity, PrimaryGeneratedColumn, Column, Check, ManyToOne } from 'typeorm';
+import { Publisher } from '../publisher/publisher.entity';
 
 @Entity()
+@Check('price > 0')
 export class Game {
   @PrimaryGeneratedColumn()
   id: number;
