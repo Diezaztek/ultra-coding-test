@@ -20,7 +20,7 @@ export class GameService {
             const games = await this.repo.find();
             return games;
         } catch (error: Error | unknown) {
-            this.logger.error('Error listing the games', error, 'GameService');
+            this.logger.error(`Error listing the games: ${error}`, 'GameService');
             throw new InternalServerErrorException({
                 error: 'Error getting the games'
             });
@@ -39,7 +39,7 @@ export class GameService {
                 });
 			}
 
-            this.logger.error('Error finding a game by id', error, 'GameService');
+            this.logger.error(`Error finding a game by id: ${error}`, 'GameService');
             throw new InternalServerErrorException({
                 error: 'Error finding the game'
             });
@@ -66,7 +66,7 @@ export class GameService {
                 });
             }
 
-            this.logger.error('Error creating a game', error, 'GameService');
+            this.logger.error(`Error creating a game: ${error}`, 'GameService');
             throw new InternalServerErrorException({
                 error: 'Error creating the game'
             });
@@ -96,7 +96,7 @@ export class GameService {
                 });
             }
 
-            this.logger.error('Error updating a game', error, 'GameService');
+            this.logger.error(`Error updating a game: ${error}`, 'GameService');
             throw new InternalServerErrorException({
                 error: 'Error updating the game'
             });
@@ -115,7 +115,7 @@ export class GameService {
                 });
             }
 
-            this.logger.error('Error deleting a game', error, 'GameService');
+            this.logger.error(`Error deleting a game: ${error}`, 'GameService');
             throw new InternalServerErrorException({
                 error: 'Error deleting the game'
             });
@@ -133,7 +133,7 @@ export class GameService {
                 });
 			}
 
-            this.logger.error('Error retrieiving publisher for a given game id', error, 'GameService');
+            this.logger.error(`Error retrieiving publisher for a given game id: ${error}`, 'GameService');
             throw new InternalServerErrorException({
                 error: 'Error retrieving the publisher data for the given game'
             });
@@ -146,7 +146,7 @@ export class GameService {
             const gamesDeleted = await this.repo.remove(games);
             return gamesDeleted;
         } catch (error: Error | unknown) {
-            this.logger.error('Error deleting games based on condition', error, 'GameService');
+            this.logger.error(`Error deleting games based on condition: ${error}`, 'GameService');
             throw new InternalServerErrorException({
                 error: 'Error deleting games'
             });
@@ -162,7 +162,7 @@ export class GameService {
             .execute();
             return gamesUpdated;
         } catch (error: Error | unknown) {
-            this.logger.error('Error updating games based on condition', error, 'GameService');
+            this.logger.error(`Error updating games based on condition: ${error}`, 'GameService');
             throw new InternalServerErrorException({
                 error: 'Error deleting games'
             });

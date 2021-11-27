@@ -52,7 +52,7 @@ export class GameConsumer {
             );
             this.logger.verbose(`Games successfully updated its prices. ${gamesUpdated.affected} games affected`, 'GameConsumer');
         } catch (error) {
-            this.logger.error('Error adjusting games', error.message, 'GameConsumer');
+            this.logger.error(`Error adjusting games: ${error}`, 'GameConsumer');
         }
         
     }

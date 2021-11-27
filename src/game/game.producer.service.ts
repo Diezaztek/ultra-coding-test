@@ -16,7 +16,7 @@ export class GameProducerService {
 
       return 'Task queued for process'
     } catch (error) {
-      this.logger.error('Error queueing task for updating games', error, 'GameProducerService')
+      this.logger.error(`Error queueing task for updating games: ${error}`, 'GameProducerService')
       throw new InternalServerErrorException({
           error: 'Error queueing the process'
       });

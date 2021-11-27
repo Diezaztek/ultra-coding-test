@@ -4,14 +4,17 @@ services:
     build: .
     depends_on:
       - postgres
+      - redis
     environment:
       - API_VERSION=${API_VERSION}
-      - LOG_LEVEL=${LOG_LEVEL}
+      - NODE_ENV={NODE_ENV}
       - DB_HOST=postgres
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
       - DB_PORT=5432=${DB_PORT}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
     ports:
       - "3000:3000"
     command: npm run start:dev
@@ -27,3 +30,8 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+
+  redis:
+    image: "redis:alpine"
+    ports:
+     - "${REDIS_PORT}:${REDIS_PORT}"

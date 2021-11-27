@@ -139,7 +139,13 @@ describe('GameController', () => {
     });
 
     try {
-      controller.findById(1);
+      controller.create({
+        title: 'Pokémon',
+        price: 100,
+        publisherId: 1,
+        tags: [],
+        releaseDate: '2021-06-12',
+      });
     } catch (error) {
       expect(error.status).toBe(500);
       expect(error.message).toMatch('Internal Server Error')

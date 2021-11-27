@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { EntityNotFoundError, Repository } from 'typeorm';
@@ -21,7 +22,11 @@ describe('PublisherService', () => {
         {
           provide: getRepositoryToken(Publisher),
           useClass: Repository
-        }
+        },
+        {
+          provide: Logger,
+          useClass: Logger
+        },
       ],
     }).compile();
 
@@ -53,5 +58,42 @@ describe('PublisherService', () => {
   
     const publisherFound = await service.findById(1);
     expect(publisherFound).toMatchObject(publisher);
+  });
+
+  it('should handle exception when error in creating publisher', async () => {
+    jest.spyOn(repo, 'create').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    const payloadPublisher = {
+      name: "publisher",
+      siret: 1,
+      phone: '555555555'
+    }
+
+    try {
+      await service.create(payloadPublisher);
+    } catch (e) {
+      expect(e.message).toMatch('Internal Server Error');
+      expect(e.status).toEqual(500)
+    }
+  });
+
+  it('should create a publisher', async () => {
+    jest.spyOn(repo, 'create').mockImplementationOnce(() => {
+      return publisher
+    });
+    jest.spyOn(repo, 'save').mockImplementationOnce(() => {
+      return Promise.resolve(publisher);
+    });
+
+    const payloadPublisher = {
+      name: "publisher",
+      siret: 1,
+      phone: '555555555'
+    }
+
+    const publisherCreated = await service.create(payloadPublisher);
+    expect(publisherCreated).toMatchObject(publisher)
   });
 });

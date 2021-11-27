@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Publisher } from '../publisher/publisher.entity';
 import { PublisherService } from '../publisher/publisher.service';
 import { GameService } from './game.service';
-import { NotFoundException } from '@nestjs/common';
+import { Logger, NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Game } from './game.entity';
 import { EntityNotFoundError, Repository } from 'typeorm';
@@ -54,6 +54,10 @@ describe('GameService', () => {
             findById: jest.fn().mockReturnValue(Promise.resolve(publisher))
           }
         },
+        {
+          provide: Logger,
+          useClass: Logger
+        }
       ],
     }).compile();
 
