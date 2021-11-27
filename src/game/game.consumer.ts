@@ -1,14 +1,17 @@
 import { Process, Processor } from "@nestjs/bull";
+import { Logger, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Job } from "bull";
 import { LessThan } from "typeorm";
 import { GameService } from "./game.service";
  
 @Processor('game-queue')
+@Injectable()
 export class GameConsumer {
     constructor(
         private gameService: GameService,
-        private configService: ConfigService
+        private configService: ConfigService,
+        private logger: Logger
     ){}
 
     substractMonths(monthsToSubstract: number) {
@@ -21,6 +24,7 @@ export class GameConsumer {
  
     @Process('adjust-games-job')
     async readOperationJob(job:Job<unknown>){
+        this.logger.log('Game catalog adjusment by date old started', 'GameConsumer');
         const taskConfigs = this.configService.get('tasks.games')
         const { 
             monthsOldForDeletion,
@@ -31,14 +35,14 @@ export class GameConsumer {
 
         try {
             const dateDeleteGames = this.substractMonths(monthsOldForDeletion);
-            await this.gameService.deleteBasedOnCondition({
+            const gamesDeleted = await this.gameService.deleteBasedOnCondition({
                 where: {
                     releaseDate: LessThan(dateDeleteGames)
                 }
             });
-            console.log('Games deleted');
+            this.logger.verbose(`Games successfully deleted. ${gamesDeleted.length} games affected`, 'GameConsumer');
 
-            await this.gameService.updateBasedOnCondition(
+            const gamesUpdated = await this.gameService.updateBasedOnCondition(
                 { price: () => `price * ${(100 - disccount)/100}` },
                 'releaseDate between :startDate and :endDate',
                 { 
@@ -46,9 +50,9 @@ export class GameConsumer {
                     endDate: this.substractMonths(endMonthsOldForDisscount)    
                 }
             );
-            console.log('Games prices updated');
+            this.logger.verbose(`Games successfully updated its prices. ${gamesUpdated.affected} games affected`, 'GameConsumer');
         } catch (error) {
-            console.log(error);
+            this.logger.error('Error adjusting games', error.message, 'GameConsumer');
         }
         
     }

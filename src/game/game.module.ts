@@ -1,5 +1,5 @@
 import { BullModule } from '@nestjs/bull';
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PublisherModule } from '../publisher/publisher.module';
 import { GameConsumer } from './game.consumer';
@@ -14,12 +14,14 @@ import { GameService } from './game.service';
     BullModule.registerQueue({
       name: 'game-queue'
     }),
-    PublisherModule],
+    PublisherModule
+  ],
   controllers: [GameController],
   providers: [
     GameService,
     GameProducerService,
-    GameConsumer
+    GameConsumer,
+    Logger
   ]
 })
 export class GameModule {}
