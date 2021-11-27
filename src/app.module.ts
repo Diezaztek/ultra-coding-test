@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GameModule } from './game/game.module';
 import { PublisherModule } from './publisher/publisher.module';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -22,6 +23,12 @@ import { PublisherModule } from './publisher/publisher.module';
         return configService.get<ConnectionOptions>('database');
       },
       inject: [ConfigService],
+  }),
+  BullModule.forRootAsync({
+    useFactory: (configService: ConfigService) => {
+      return configService.get('redis');
+    },
+    inject: [ConfigService],
   }),
     GameModule,
     PublisherModule,

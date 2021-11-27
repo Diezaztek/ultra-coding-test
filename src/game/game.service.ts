@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
-import { EntityNotFoundError, Repository } from 'typeorm';
+import { EntityNotFoundError, FindManyOptions, getRepository, MoreThan, ObjectLiteral, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game } from './game.entity';
 import { CreateGameDto } from './dtos/create-game.dto';
 import { PublisherService } from '../publisher/publisher.service';
 import { UpdateGameDto } from './dtos/update-game.dto';
+import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 @Injectable()
 export class GameService {
@@ -130,5 +131,33 @@ export class GameService {
                 error: 'Error retrieving the publisher data for the given game'
             })
         }
+    }
+
+    async deleteBasedOnCondition(options: FindManyOptions<Game>) {
+        try {
+            const games = await this.repo.find(options);
+            const gamesDeleted = await this.repo.remove(games);
+            return gamesDeleted;
+        } catch (error: Error | unknown) {
+            throw new InternalServerErrorException({
+                error: 'Error deleting games'
+            })
+        }
+    }
+
+    async updateBasedOnCondition(values: QueryPartialEntity<Game>, filter: string, params: ObjectLiteral) {
+        try {
+            const gamesUpdated = await getRepository(Game).createQueryBuilder()
+            .update()
+            .set(values)
+            .where(filter, params)
+            .execute();
+            return gamesUpdated;
+        } catch (error: Error | unknown) {
+            throw new InternalServerErrorException({
+                error: 'Error deleting games'
+            })
+        }
+        
     }
 }

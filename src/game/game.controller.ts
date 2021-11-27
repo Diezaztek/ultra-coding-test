@@ -1,11 +1,15 @@
-import { Get, Post, Put, Delete, Body, Param, Controller } from '@nestjs/common';
+import { Get, Post, Put, Delete, Body, Param, Controller, Query } from '@nestjs/common';
 import { CreateGameDto } from './dtos/create-game.dto';
 import { UpdateGameDto } from './dtos/update-game.dto';
+import { GameProducerService } from './game.producer.service';
 import { GameService } from './game.service';
 
 @Controller('game')
 export class GameController {
-    constructor(private gameService: GameService) {}
+    constructor(
+        private gameService: GameService,
+        private gameProducerService: GameProducerService
+    ) {}
 
     @Get()
     list() {
@@ -25,6 +29,11 @@ export class GameController {
     @Post()
     create(@Body() body: CreateGameDto) {
         return this.gameService.create(body);
+    }
+
+    @Post('/price-adjustment-task')
+    invokePriceAdjustmentTask() {
+        return this.gameProducerService.timeGameAdjustments();
     }
 
     @Put('/:id')

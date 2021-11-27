@@ -34,7 +34,19 @@ describe('GameService', () => {
         GameService,
         {
           provide: getRepositoryToken(Game),
-          useClass: Repository
+          useValue: {
+            find: jest.fn(),
+            findOneOrFail: jest.fn(),
+            create: jest.fn(),
+            save: jest.fn(),
+            remove: jest.fn(),
+            createQueryBuilder: jest.fn(() => ({
+              update: jest.fn().mockReturnThis(),
+              set: jest.fn().mockReturnThis(),
+              where: jest.fn().mockReturnThis(),
+              execute: jest.fn().mockResolvedValue(Promise.resolve(game)),
+            })),
+          },
         },
         {
           provide: PublisherService,
@@ -320,5 +332,38 @@ describe('GameService', () => {
 
     const publisherResult = await service.retrievePublisherDataByGameId(1);
     expect(publisherResult).toBe(publisher);
+  });
+
+  it('should return false when deleting based on condition failed', async () => {
+    jest.spyOn(repo, 'find').mockImplementationOnce(() => {
+      return Promise.resolve([game]);
+    });
+    jest.spyOn(repo, 'remove').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    try {
+      await service.deleteBasedOnCondition({
+        where: 'true = true'
+      });
+    } catch (error) {
+      expect(error.message).toMatch('Internal Server Error');
+      expect(error.status).toBe(500);
+    }
+  });
+
+  it('should return true when deleting based on condition succeed', async () => {
+    jest.spyOn(repo, 'find').mockImplementationOnce(() => {
+      return Promise.resolve([game]);
+    });
+    jest.spyOn(repo, 'remove').mockImplementationOnce(() => {
+      return Promise.resolve(game)
+    });
+
+    const deletionSucceed = await service.deleteBasedOnCondition({
+      where: 'true = true'
+    });
+
+    expect(deletionSucceed).toBe(game);
   });
 });

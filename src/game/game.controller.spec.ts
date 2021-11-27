@@ -3,11 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Publisher } from '../publisher/publisher.entity';
 import { GameController } from './game.controller';
 import { Game } from './game.entity';
+import { GameProducerService } from './game.producer.service';
 import { GameService } from './game.service';
 
 describe('GameController', () => {
   let controller: GameController;
   let service: GameService;
+  let producer: GameProducerService;
 
   const publisher: Publisher = {
     id: 1,
@@ -40,12 +42,19 @@ describe('GameController', () => {
             delete: jest.fn().mockReturnValue(game),
             retrievePublisherDataByGameId: jest.fn().mockReturnValue(publisher)
           }
+        },
+        {
+          provide: GameProducerService,
+          useValue: {
+            timeGameAdjustments: jest.fn()
+          }
         }
       ]
     }).compile();
 
     controller = module.get<GameController>(GameController);
     service = module.get<GameService>(GameService);
+    producer = module.get<GameProducerService>(GameProducerService);
   });
 
   it('should be defined', () => {
@@ -288,5 +297,27 @@ describe('GameController', () => {
     const publisherFound = controller.getPublisherDataByGameId(1);
 
     expect(publisherFound).toMatchObject(publisher);
+  });
+
+  it('should return alert when failing in queue process', async () => {
+    jest.spyOn(producer, 'timeGameAdjustments').mockImplementationOnce(() => {
+      throw new InternalServerErrorException();
+    });
+
+    try {
+      await controller.invokePriceAdjustmentTask();
+    } catch (error) {
+      expect(error.status).toBe(500);
+      expect(error.message).toMatch('Internal Server Error')
+    }
+  });
+
+  it('should return success message when queued success', async () => {
+    jest.spyOn(producer, 'timeGameAdjustments').mockImplementationOnce(() => {
+      return Promise.resolve('Task queued for process');
+    });
+
+    const result = await controller.invokePriceAdjustmentTask();
+    expect(result).toBe('Task queued for process')
   });
 });

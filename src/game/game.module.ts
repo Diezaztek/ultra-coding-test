@@ -1,13 +1,25 @@
+import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PublisherModule } from '../publisher/publisher.module';
+import { GameConsumer } from './game.consumer';
 import { GameController } from './game.controller';
 import { Game } from './game.entity';
+import { GameProducerService } from './game.producer.service';
 import { GameService } from './game.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Game]), PublisherModule],
+  imports: [
+    TypeOrmModule.forFeature([Game]),
+    BullModule.registerQueue({
+      name: 'game-queue'
+    }),
+    PublisherModule],
   controllers: [GameController],
-  providers: [GameService]
+  providers: [
+    GameService,
+    GameProducerService,
+    GameConsumer
+  ]
 })
 export class GameModule {}
