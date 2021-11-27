@@ -61,9 +61,9 @@ describe('GameService', () => {
 
     try {
       await service.list();
-    } catch (e) {
-      expect(e.message).toMatch('Internal Server Error');
-      expect(e.status).toEqual(500)
+    } catch (error) {
+      expect(error.message).toMatch('Internal Server Error');
+      expect(error.status).toEqual(500)
     }
   });
 
@@ -83,9 +83,9 @@ describe('GameService', () => {
 
     try {
       await service.findById(1);
-    } catch (e) {
-      expect(e.message).toMatch('Not Found');
-      expect(e.status).toEqual(404)
+    } catch (error) {
+      expect(error.message).toMatch('Not Found');
+      expect(error.status).toEqual(404)
     }
   });
 
@@ -96,9 +96,9 @@ describe('GameService', () => {
 
     try {
       await service.findById(1);
-    } catch (e) {
-      expect(e.message).toMatch('Internal Server Error');
-      expect(e.status).toEqual(500)
+    } catch (error) {
+      expect(error.message).toMatch('Internal Server Error');
+      expect(error.status).toEqual(500)
     }
   });
 
@@ -124,9 +124,9 @@ describe('GameService', () => {
         tags: [],
         releaseDate: '2021-11-20'
       });
-    } catch (e) {
-      expect(e.message).toMatch('Not Found');
-      expect(e.status).toEqual(404)
+    } catch (error) {
+      expect(error.message).toMatch('Not Found');
+      expect(error.status).toEqual(404)
     }
   });
 
@@ -143,9 +143,9 @@ describe('GameService', () => {
         tags: [],
         releaseDate: '2021-11-20'
       });
-    } catch (e) {
-      expect(e.message).toMatch('Internal Server Error');
-      expect(e.status).toEqual(500)
+    } catch (error) {
+      expect(error.message).toMatch('Internal Server Error');
+      expect(error.status).toEqual(500)
     }
   });
 
@@ -160,13 +160,15 @@ describe('GameService', () => {
       return Promise.resolve(game);
     });
 
-    const gameCreated = await service.create({
+    const payloadGame = {
       title: 'Pokémon',
       price: 100,
       publisherId: 1,
       tags: [],
       releaseDate: '2021-11-20'
-    });
+    }
+
+    const gameCreated = await service.create(payloadGame);
 
     expect(gameCreated).toMatchObject(game);
   });
@@ -180,9 +182,9 @@ describe('GameService', () => {
       await service.update(1, {
         price: 100,
       });
-    } catch (e) {
-      expect(e.message).toMatch('Not Found');
-      expect(e.status).toEqual(404)
+    } catch (error) {
+      expect(error.message).toMatch('Not Found');
+      expect(error.status).toEqual(404)
     }
   });
 
@@ -199,9 +201,9 @@ describe('GameService', () => {
         price: 100,
         publisherId: 1
       });
-    } catch (e) {
-      expect(e.message).toMatch('Not Found');
-      expect(e.status).toEqual(404)
+    } catch (error) {
+      expect(error.message).toMatch('Not Found');
+      expect(error.status).toEqual(404)
     }
   });
 
@@ -251,9 +253,9 @@ describe('GameService', () => {
 
     try {
       await service.delete(1);
-    } catch (e) {
-      expect(e.message).toMatch('Not Found');
-      expect(e.status).toEqual(404)
+    } catch (error) {
+      expect(error.message).toMatch('Not Found');
+      expect(error.status).toEqual(404)
     }
   });
 
@@ -267,9 +269,9 @@ describe('GameService', () => {
 
     try {
       await service.delete(1);
-    } catch (e) {
-      expect(e.message).toMatch('Internal Server Error');
-      expect(e.status).toEqual(500)
+    } catch (error) {
+      expect(error.message).toMatch('Internal Server Error');
+      expect(error.status).toEqual(500)
     }
   });
 
@@ -283,5 +285,40 @@ describe('GameService', () => {
 
     const gameDeleted = await service.delete(1);
     expect(gameDeleted).toMatchObject(game);
+  });
+
+  it('should fail when trying to get publisher data for a game that does not exists', async () => {
+    jest.spyOn(repo, 'findOneOrFail').mockImplementationOnce(() => {
+      throw new EntityNotFoundError(Game, {});
+    });
+
+    try {
+      await service.retrievePublisherDataByGameId(1);
+    } catch (error) {
+      expect(error.message).toMatch('Not Found');
+      expect(error.status).toBe(404);
+    }
+  });
+
+  it('should handle error reading database getting publisher data', async () => {
+    jest.spyOn(repo, 'findOneOrFail').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    try {
+      await service.retrievePublisherDataByGameId(1);
+    } catch (error) {
+      expect(error.message).toMatch('Internal Server Error');
+      expect(error.status).toBe(500);
+    }
+  });
+
+  it('should return publisher data for a given game', async () => {
+    jest.spyOn(repo, 'findOneOrFail').mockImplementationOnce(() => {
+      return Promise.resolve(game);
+    });
+
+    const publisherResult = await service.retrievePublisherDataByGameId(1);
+    expect(publisherResult).toBe(publisher);
   });
 });

@@ -20,8 +20,8 @@ export class Game {
   releaseDate: string;
 
   @ManyToOne(type => Publisher, publisher => publisher.id, {
-      cascade: ['insert']
+    eager: true
   })
-  publisher: Publisher; 
+  publisher: Publisher
 
 }

@@ -48,13 +48,13 @@ export class GameService {
             const gameObject = this.repo.create({
                 title: attrs.title,
                 price:attrs.price,
-                publisher,
                 tags: attrs.tags,
                 releaseDate: attrs.releaseDate,
             });
+            gameObject.publisher = publisher;
 
-            const createdGame = await this.repo.save(gameObject);
-            return createdGame;
+            const gameCreated = await this.repo.save(gameObject);
+            return gameCreated;
         } catch (error: Error | unknown) {
             if (error instanceof NotFoundException) {
                 throw new NotFoundException({
@@ -75,7 +75,6 @@ export class GameService {
 
             if ('publisherId' in attrs) {
                 const publisher = await this.publisherService.findById(attrs.publisherId);
-                console.log(publisher);
                 game.publisher = publisher;
             }
 
@@ -112,6 +111,23 @@ export class GameService {
 
             throw new InternalServerErrorException({
                 error: 'Error deleting the game'
+            })
+        }
+    }
+
+    async retrievePublisherDataByGameId(id: number) {
+        try {
+            const game = await this.repo.findOneOrFail(id);
+            return game.publisher;
+        } catch (error: Error | unknown) {
+            if (error instanceof EntityNotFoundError) {
+				throw new NotFoundException({
+                    error: 'Game does not exists',
+                });
+			}
+
+            throw new InternalServerErrorException({
+                error: 'Error retrieving the publisher data for the given game'
             })
         }
     }

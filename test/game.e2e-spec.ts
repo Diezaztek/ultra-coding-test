@@ -284,4 +284,37 @@ describe('AppController (e2e)', () => {
       .expect(200)
       .expect(game);
   });
+
+  it('/game/{id}/publisher (GET) 404 When trying to get publisher info of a game that does not exists', () => {
+    jest.spyOn(gameRepo, 'findOneOrFail').mockImplementationOnce(() => {
+      throw new EntityNotFoundError(Game, {});
+    });
+
+    return request(app.getHttpServer())
+      .get('/game/1/publisher')
+      .expect(404)
+      .expect({ error: 'Game does not exists' });
+  });
+
+  it('/game/{id}/publisher (GET) 500 handle exception in database', () => {
+    jest.spyOn(gameRepo, 'findOneOrFail').mockImplementationOnce(() => {
+      throw new Error();
+    });
+
+    return request(app.getHttpServer())
+      .get('/game/1/publisher')
+      .expect(500)
+      .expect({ error: 'Error retrieving the publisher data for the given game' });
+  });
+
+  it('/game/{id}/publisher (GET) 200 get publisher data for a given game', () => {
+    jest.spyOn(gameRepo, 'findOneOrFail').mockImplementationOnce(() => {
+      return Promise.resolve(game);
+    });
+
+    return request(app.getHttpServer())
+      .get('/game/1/publisher')
+      .expect(200)
+      .expect(publisher);
+  });
 });

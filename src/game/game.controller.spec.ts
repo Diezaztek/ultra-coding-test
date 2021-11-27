@@ -37,7 +37,8 @@ describe('GameController', () => {
             findById: jest.fn().mockReturnValue(game),
             create: jest.fn().mockReturnValue(game),
             update: jest.fn().mockReturnValue(game),
-            delete: jest.fn().mockReturnValue(game)
+            delete: jest.fn().mockReturnValue(game),
+            retrievePublisherDataByGameId: jest.fn().mockReturnValue(publisher)
           }
         }
       ]
@@ -191,7 +192,7 @@ describe('GameController', () => {
   });
 
   it('should return InternalServerError when failing to update a game', () => {
-    jest.spyOn(service, 'create').mockImplementationOnce(() => {
+    jest.spyOn(service, 'update').mockImplementationOnce(() => {
       throw new InternalServerErrorException();
     });
 
@@ -222,7 +223,7 @@ describe('GameController', () => {
   });
 
   it('should return NotFound Exception when trying to delete a game that does not exists', () => {
-    jest.spyOn(service, 'update').mockImplementationOnce(() => {
+    jest.spyOn(service, 'delete').mockImplementationOnce(() => {
       throw new NotFoundException({
         error: 'Game does not exists',
       });
@@ -237,7 +238,7 @@ describe('GameController', () => {
   });
 
   it('should return InternalServerError when failing to delete a game', () => {
-    jest.spyOn(service, 'create').mockImplementationOnce(() => {
+    jest.spyOn(service, 'delete').mockImplementationOnce(() => {
       throw new InternalServerErrorException();
     });
 
@@ -253,5 +254,39 @@ describe('GameController', () => {
     const gameDeleted = controller.delete(1);
 
     expect(gameDeleted).toMatchObject(game);
+  });
+
+  it('should return NotFound Exception when trying to get publisher info of a game that does not exists', () => {
+    jest.spyOn(service, 'retrievePublisherDataByGameId').mockImplementationOnce(() => {
+      throw new NotFoundException({
+        error: 'Game does not exists',
+      });
+    });
+
+    try {
+      controller.getPublisherDataByGameId(1);
+    } catch (error) {
+      expect(error.response.error).toMatch('Game does not exists')
+      expect(error.status).toBe(404);
+    }
+  });
+
+  it('should return InternalServerError when failing to delete a game', () => {
+    jest.spyOn(service, 'retrievePublisherDataByGameId').mockImplementationOnce(() => {
+      throw new InternalServerErrorException();
+    });
+
+    try {
+      controller.delete(1);
+    } catch (error) {
+      expect(error.status).toBe(500);
+      expect(error.message).toMatch('Internal Server Error')
+    }
+  });
+
+  it('should return publisher data for a given game id', () => {
+    const publisherFound = controller.getPublisherDataByGameId(1);
+
+    expect(publisherFound).toMatchObject(publisher);
   });
 });

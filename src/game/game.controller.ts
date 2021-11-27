@@ -17,6 +17,11 @@ export class GameController {
         return this.gameService.findById(id);
     }
 
+    @Get('/:id/publisher')
+    getPublisherDataByGameId(@Param('id') id: number) {
+        return this.gameService.retrievePublisherDataByGameId(id);
+    }
+
     @Post()
     create(@Body() body: CreateGameDto) {
         return this.gameService.create(body);
