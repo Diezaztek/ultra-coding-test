@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException, InternalServerErrorException, Logger } from '@nestjs/common';
-import { EntityNotFoundError, FindManyOptions, getRepository, MoreThan, ObjectLiteral, Repository } from 'typeorm';
+import { EntityNotFoundError, FindManyOptions, getRepository, ObjectLiteral, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Game } from './game.entity';
 import { CreateGameDto } from './dtos/create-game.dto';
 import { PublisherService } from '../publisher/publisher.service';
 import { UpdateGameDto } from './dtos/update-game.dto';
 import { QueryPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { Publisher } from '../publisher/publisher.entity';
 
 @Injectable()
 export class GameService {
@@ -15,7 +16,7 @@ export class GameService {
         private logger: Logger
     ){}
 
-    async list() {
+    async list(): Promise<Game[]> {
         try {
             const games = await this.repo.find();
             return games;
@@ -28,7 +29,7 @@ export class GameService {
         
     }
 
-    async findById(id: number) {
+    async findById(id: number): Promise<Game> {
         try {
             const game = await this.repo.findOneOrFail(id);
             return game;
@@ -46,7 +47,7 @@ export class GameService {
         }
     }
 
-    async create(attrs: CreateGameDto) {
+    async create(attrs: CreateGameDto): Promise<Game> {
         try {
             const publisher = await this.publisherService.findById(attrs.publisherId);
             const gameObject = this.repo.create({
@@ -73,7 +74,7 @@ export class GameService {
         }
     }
 
-    async update(id: number, attrs: Partial<UpdateGameDto>) {
+    async update(id: number, attrs: Partial<UpdateGameDto>): Promise<Game> {
         try {
             const game = await this.repo.findOneOrFail(id);
             Object.assign(game, attrs);
@@ -103,7 +104,7 @@ export class GameService {
         }
     }
 
-    async delete(id: number) {
+    async delete(id: number): Promise<Game> {
         try {
             const game = await this.repo.findOneOrFail(id);
             const deletedGame = await this.repo.remove(game);
@@ -122,7 +123,7 @@ export class GameService {
         }
     }
 
-    async retrievePublisherDataByGameId(id: number) {
+    async retrievePublisherDataByGameId(id: number): Promise<Publisher> {
         try {
             const game = await this.repo.findOneOrFail(id);
             return game.publisher;
@@ -140,7 +141,7 @@ export class GameService {
         }
     }
 
-    async deleteBasedOnCondition(options: FindManyOptions<Game>) {
+    async deleteBasedOnCondition(options: FindManyOptions<Game>): Promise<Game[]> {
         try {
             const games = await this.repo.find(options);
             const gamesDeleted = await this.repo.remove(games);
@@ -153,7 +154,7 @@ export class GameService {
         }
     }
 
-    async updateBasedOnCondition(values: QueryPartialEntity<Game>, filter: string, params: ObjectLiteral) {
+    async updateBasedOnCondition(values: QueryPartialEntity<Game>, filter: string, params: ObjectLiteral): Promise<UpdateResult> {
         try {
             const gamesUpdated = await getRepository(Game).createQueryBuilder()
             .update()

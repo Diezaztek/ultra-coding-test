@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { EntityNotFoundError, Repository } from 'typeorm';
 import { Game } from '../src/game/game.entity';
@@ -8,6 +8,8 @@ import { GameController } from '../src/game/game.controller';
 import { GameService } from '../src/game/game.service';
 import { PublisherService } from '../src/publisher/publisher.service';
 import { Publisher } from '../src/publisher/publisher.entity';
+import { GameProducerService } from '../src/game/game.producer.service';
+import { getQueueToken } from '@nestjs/bull';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -47,6 +49,18 @@ describe('AppController (e2e)', () => {
         {
           provide: getRepositoryToken(Publisher),
           useClass: Repository
+        },
+        {
+          provide: Logger,
+          useClass: Logger
+        },
+        {
+          provide: GameProducerService,
+          useClass: GameProducerService
+        },
+        {
+          provide: getQueueToken('game-queue'),
+          useValue: {} 
         }
       ],
     }).compile();

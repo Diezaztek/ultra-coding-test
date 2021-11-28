@@ -2,10 +2,14 @@ import { Get, Post, Put, Delete, Body, Param, Controller, Query } from '@nestjs/
 import {
     ApiOperation,
     ApiTags,
-    ApiHeader
+    ApiHeader,
+    ApiOkResponse,
+    ApiCreatedResponse
   } from '@nestjs/swagger';
+import { Publisher } from '../publisher/publisher.entity';
 import { CreateGameDto } from './dtos/create-game.dto';
 import { UpdateGameDto } from './dtos/update-game.dto';
+import { Game } from './game.entity';
 import { GameProducerService } from './game.producer.service';
 import { GameService } from './game.service';
 
@@ -23,43 +27,50 @@ export class GameController {
 
     @Get()
     @ApiOperation({ description: 'List all games' })
-    list() {
+    @ApiOkResponse({ type: [Game] })
+    list(): Promise<Game[]> {
         return this.gameService.list();
     }
 
     @Get('/:id')
     @ApiOperation({ description: 'Retrieve a single game by id' })
-    findById(@Param('id') id: number) {
+    @ApiOkResponse({ type: Game })
+    findById(@Param('id') id: number): Promise<Game> {
         return this.gameService.findById(id);
     }
 
     @Get('/:id/publisher')
     @ApiOperation({ description: 'Retrieve publisher data for a given game id' })
-    getPublisherDataByGameId(@Param('id') id: number) {
+    @ApiOkResponse({ type: Publisher })
+    getPublisherDataByGameId(@Param('id') id: number): Promise<Publisher> {
         return this.gameService.retrievePublisherDataByGameId(id);
     }
 
     @Post()
     @ApiOperation({ description: 'Create a game' })
-    create(@Body() body: CreateGameDto) {
+    @ApiCreatedResponse({ type: Game })
+    create(@Body() body: CreateGameDto): Promise<Game> {
         return this.gameService.create(body);
     }
 
     @Post('/game-adjustment-task')
     @ApiOperation({ description: 'Start task for updating/deleting games based on its age' })
-    invokePriceAdjustmentTask() {
+    @ApiOkResponse({ type: String })
+    invokePriceAdjustmentTask(): Promise<string> {
         return this.gameProducerService.timeGameAdjustments();
     }
 
     @Put('/:id')
     @ApiOperation({ description: 'Update game information' })
-    update(@Param('id') id: number, @Body() body: UpdateGameDto) {
+    @ApiOkResponse({ type: Game })
+    update(@Param('id') id: number, @Body() body: UpdateGameDto): Promise<Game> {
         return this.gameService.update(id, body);
     }
 
     @Delete('/:id')
     @ApiOperation({ description: 'Delete a game' })
-    delete(@Param('id') id: number) {
+    @ApiOkResponse({ type: Game })
+    delete(@Param('id') id: number): Promise<Game> {
         return this.gameService.delete(id);
     }
 

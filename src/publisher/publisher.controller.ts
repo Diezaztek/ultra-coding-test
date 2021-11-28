@@ -2,9 +2,11 @@ import { Post, Body, Controller} from '@nestjs/common';
 import {
     ApiOperation,
     ApiTags,
-    ApiHeader
+    ApiHeader,
+    ApiCreatedResponse
   } from '@nestjs/swagger';
 import { CreatePublisherDto } from './dtos/create-publisher.dto';
+import { Publisher } from './publisher.entity';
 import { PublisherService } from './publisher.service';
 
 @ApiTags('publisher')
@@ -20,7 +22,8 @@ export class PublisherController {
 
     @Post()
     @ApiOperation({ description: 'Create a game' })
-    create(@Body() body: CreatePublisherDto) {
+    @ApiCreatedResponse({ type: Publisher })
+    create(@Body() body: CreatePublisherDto): Promise<Publisher> {
         return this.publisherService.create(body);
     }
 

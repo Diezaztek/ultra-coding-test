@@ -11,7 +11,7 @@ export class PublisherService {
         private logger: Logger
     ){}
 
-    async findById(id: number) {
+    async findById(id: number): Promise<Publisher> {
         try {
             const game = await this.repo.findOneOrFail(id);
             return game;
@@ -23,7 +23,7 @@ export class PublisherService {
         }
     }
 
-    async create(attrs: CreatePublisherDto) {
+    async create(attrs: CreatePublisherDto): Promise<Publisher> {
         try {
             const publisherObject = this.repo.create(attrs);
 

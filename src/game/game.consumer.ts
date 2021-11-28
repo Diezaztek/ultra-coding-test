@@ -23,7 +23,7 @@ export class GameConsumer {
     }
  
     @Process('adjust-games-job')
-    async readOperationJob(job:Job<unknown>){
+    async readOperationJob(job:Job<unknown>): Promise<void> {
         this.logger.log('Game catalog adjusment by date old started', 'GameConsumer');
         const taskConfigs = this.configService.get('tasks.games')
         const { 

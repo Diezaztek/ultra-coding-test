@@ -9,7 +9,7 @@ export class GameProducerService {
       private logger: Logger
   ) {}
  
-  async timeGameAdjustments() {
+  async timeGameAdjustments(): Promise<string> {
     try {
       await this.queue.add('adjust-games-job');
       this.logger.log('Task for updating games based on age was successfully queued', 'GameProducerService')
