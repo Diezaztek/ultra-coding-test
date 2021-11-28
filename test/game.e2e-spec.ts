@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { EntityNotFoundError, Repository } from 'typeorm';
@@ -20,8 +20,8 @@ describe('AppController (e2e)', () => {
     id: 1,
     name: 'test',
     siret: 1,
-    phone: '0000000000'
-  }
+    phone: '0000000000',
+  };
 
   const game: Game = {
     id: 1,
@@ -29,8 +29,8 @@ describe('AppController (e2e)', () => {
     price: 100,
     tags: [],
     publisher: publisher,
-    releaseDate: '2021-11-20'
-  }
+    releaseDate: '2021-11-20',
+  };
 
   beforeEach(async () => {
     const moduleFixture = await Test.createTestingModule({
@@ -40,41 +40,43 @@ describe('AppController (e2e)', () => {
         GameService,
         {
           provide: getRepositoryToken(Game),
-          useClass: Repository
+          useClass: Repository,
         },
         {
           provide: PublisherService,
-          useClass: PublisherService
+          useClass: PublisherService,
         },
         {
           provide: getRepositoryToken(Publisher),
-          useClass: Repository
+          useClass: Repository,
         },
         {
           provide: Logger,
-          useClass: Logger
+          useClass: Logger,
         },
         {
           provide: GameProducerService,
-          useClass: GameProducerService
+          useClass: GameProducerService,
         },
         {
           provide: getQueueToken('game-queue'),
-          useValue: {} 
-        }
+          useValue: {},
+        },
       ],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     gameRepo = moduleFixture.get<Repository<Game>>(getRepositoryToken(Game));
-    publisherRepo = moduleFixture.get<Repository<Publisher>>(getRepositoryToken(Publisher));
+    publisherRepo = moduleFixture.get<Repository<Publisher>>(
+      getRepositoryToken(Publisher),
+    );
     await app.init();
   });
 
-  afterAll(done => {
-      app.close();
-      done();
+  afterAll((done) => {
+    app.close();
+    done();
   });
 
   it('/game (GET) 500 Handle database error', () => {
@@ -90,13 +92,10 @@ describe('AppController (e2e)', () => {
 
   it('/game (GET) 200 Return games', () => {
     jest.spyOn(gameRepo, 'find').mockImplementationOnce(() => {
-      return Promise.resolve([game])
+      return Promise.resolve([game]);
     });
 
-    return request(app.getHttpServer())
-      .get('/game')
-      .expect(200)
-      .expect([game]);
+    return request(app.getHttpServer()).get('/game').expect(200).expect([game]);
   });
 
   it('/game/{id} (GET) 404 error when game not found', () => {
@@ -107,7 +106,7 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/game/1')
       .expect(404)
-      .expect({error: 'Game does not exists'});
+      .expect({ error: 'Game does not exists' });
   });
 
   it('/game/{id} (GET) 500 Handle database error', () => {
@@ -126,16 +125,11 @@ describe('AppController (e2e)', () => {
       return Promise.resolve(game);
     });
 
-    return request(app.getHttpServer())
-      .get('/game/1')
-      .expect(200)
-      .expect(game);
+    return request(app.getHttpServer()).get('/game/1').expect(200).expect(game);
   });
 
   it('/game (POST) 400 invalid payload provided', () => {
-    return request(app.getHttpServer())
-      .post('/game')
-      .expect(400);
+    return request(app.getHttpServer()).post('/game').expect(400);
   });
 
   it('/game (POST) 404 invalid publisher provided', () => {
@@ -178,7 +172,7 @@ describe('AppController (e2e)', () => {
       return Promise.resolve(publisher);
     });
     jest.spyOn(gameRepo, 'create').mockImplementationOnce(() => {
-      return game
+      return game;
     });
     jest.spyOn(gameRepo, 'save').mockImplementationOnce(() => {
       return Promise.resolve(game);
@@ -318,7 +312,9 @@ describe('AppController (e2e)', () => {
     return request(app.getHttpServer())
       .get('/game/1/publisher')
       .expect(500)
-      .expect({ error: 'Error retrieving the publisher data for the given game' });
+      .expect({
+        error: 'Error retrieving the publisher data for the given game',
+      });
   });
 
   it('/game/{id}/publisher (GET) 200 get publisher data for a given game', () => {

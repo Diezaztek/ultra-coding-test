@@ -12,16 +12,11 @@ import { GameService } from './game.service';
   imports: [
     TypeOrmModule.forFeature([Game]),
     BullModule.registerQueue({
-      name: 'game-queue'
+      name: 'game-queue',
     }),
-    PublisherModule
+    PublisherModule,
   ],
   controllers: [GameController],
-  providers: [
-    GameService,
-    GameProducerService,
-    GameConsumer,
-    Logger
-  ]
+  providers: [GameService, GameProducerService, GameConsumer, Logger],
 })
 export class GameModule {}

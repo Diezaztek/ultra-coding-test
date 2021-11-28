@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, PrimaryGeneratedColumn, Column, Check, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Check,
+  ManyToOne,
+} from 'typeorm';
 import { Publisher } from '../publisher/publisher.entity';
 
 @Entity()
@@ -25,10 +31,9 @@ export class Game {
   @ApiProperty()
   releaseDate: string;
 
-  @ManyToOne(type => Publisher, publisher => publisher.id, {
-    eager: true
+  @ManyToOne(() => Publisher, (publisher) => publisher.id, {
+    eager: true,
   })
   @ApiProperty()
-  publisher: Publisher
-
+  publisher: Publisher;
 }

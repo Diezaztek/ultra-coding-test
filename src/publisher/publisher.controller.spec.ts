@@ -1,4 +1,4 @@
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Publisher } from '../publisher/publisher.entity';
 import { PublisherController } from './publisher.controller';
@@ -12,9 +12,8 @@ describe('GameController', () => {
     id: 1,
     name: 'test',
     siret: 1,
-    phone: '0000000000'
-  }
-
+    phone: '0000000000',
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,9 +23,9 @@ describe('GameController', () => {
           provide: PublisherService,
           useValue: {
             create: jest.fn().mockReturnValue(publisher),
-          }
+          },
         },
-      ]
+      ],
     }).compile();
 
     controller = module.get<PublisherController>(PublisherController);
@@ -44,21 +43,21 @@ describe('GameController', () => {
 
     try {
       controller.create({
-          name: "publisher",
-          siret: 1,
-          phone: "55555555"
+        name: 'publisher',
+        siret: 1,
+        phone: '55555555',
       });
     } catch (error) {
       expect(error.status).toBe(500);
-      expect(error.message).toMatch('Internal Server Error')
+      expect(error.message).toMatch('Internal Server Error');
     }
   });
 
   it('should create a publisher', () => {
     const publisherCreated = controller.create({
-        name: "publisher",
-        siret: 1,
-        phone: "55555555"
+      name: 'publisher',
+      siret: 1,
+      phone: '55555555',
     });
 
     expect(publisherCreated).toMatchObject(publisher);

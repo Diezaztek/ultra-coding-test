@@ -12,8 +12,8 @@ describe('PublisherService', () => {
     id: 1,
     name: 'test',
     siret: 1,
-    phone: '0000000000'
-  }
+    phone: '0000000000',
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,11 +21,11 @@ describe('PublisherService', () => {
         PublisherService,
         {
           provide: getRepositoryToken(Publisher),
-          useClass: Repository
+          useClass: Repository,
         },
         {
           provide: Logger,
-          useClass: Logger
+          useClass: Logger,
         },
       ],
     }).compile();
@@ -40,14 +40,14 @@ describe('PublisherService', () => {
 
   it('should return NotFoundException when publisher does not exists', async () => {
     jest.spyOn(repo, 'findOneOrFail').mockImplementationOnce(() => {
-      throw new EntityNotFoundError(Publisher, {})
+      throw new EntityNotFoundError(Publisher, {});
     });
 
     try {
       await service.findById(1);
     } catch (e) {
       expect(e.message).toMatch('Not Found');
-      expect(e.status).toEqual(404)
+      expect(e.status).toEqual(404);
     }
   });
 
@@ -55,7 +55,7 @@ describe('PublisherService', () => {
     jest.spyOn(repo, 'findOneOrFail').mockImplementationOnce(() => {
       return Promise.resolve(publisher);
     });
-  
+
     const publisherFound = await service.findById(1);
     expect(publisherFound).toMatchObject(publisher);
   });
@@ -66,34 +66,34 @@ describe('PublisherService', () => {
     });
 
     const payloadPublisher = {
-      name: "publisher",
+      name: 'publisher',
       siret: 1,
-      phone: '555555555'
-    }
+      phone: '555555555',
+    };
 
     try {
       await service.create(payloadPublisher);
     } catch (e) {
       expect(e.message).toMatch('Internal Server Error');
-      expect(e.status).toEqual(500)
+      expect(e.status).toEqual(500);
     }
   });
 
   it('should create a publisher', async () => {
     jest.spyOn(repo, 'create').mockImplementationOnce(() => {
-      return publisher
+      return publisher;
     });
     jest.spyOn(repo, 'save').mockImplementationOnce(() => {
       return Promise.resolve(publisher);
     });
 
     const payloadPublisher = {
-      name: "publisher",
+      name: 'publisher',
       siret: 1,
-      phone: '555555555'
-    }
+      phone: '555555555',
+    };
 
     const publisherCreated = await service.create(payloadPublisher);
-    expect(publisherCreated).toMatchObject(publisher)
+    expect(publisherCreated).toMatchObject(publisher);
   });
 });

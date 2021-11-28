@@ -13,9 +13,7 @@ import { BullModule } from '@nestjs/bull';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        appConfig
-      ]
+      load: [appConfig],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -23,17 +21,17 @@ import { BullModule } from '@nestjs/bull';
         return configService.get<ConnectionOptions>('database');
       },
       inject: [ConfigService],
-  }),
-  BullModule.forRootAsync({
-    useFactory: (configService: ConfigService) => {
-      return {
-        redis: {
-          ...configService.get('redis')
-        }
-      }
-    },
-    inject: [ConfigService],
-  }),
+    }),
+    BullModule.forRootAsync({
+      useFactory: (configService: ConfigService) => {
+        return {
+          redis: {
+            ...configService.get('redis'),
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
     GameModule,
     PublisherModule,
   ],

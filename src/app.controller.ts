@@ -9,7 +9,7 @@ export class AppController {
 
   @Get()
   @ApiOperation({ description: 'Check if API is up' })
-  @ApiOkResponse({ type: String,  })
+  @ApiOkResponse({ type: String })
   getHealthCheck(): string {
     return this.appService.healthCheck();
   }

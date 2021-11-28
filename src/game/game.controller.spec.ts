@@ -1,4 +1,7 @@
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Publisher } from '../publisher/publisher.entity';
 import { GameController } from './game.controller';
@@ -15,8 +18,8 @@ describe('GameController', () => {
     id: 1,
     name: 'test',
     siret: 1,
-    phone: '0000000000'
-  }
+    phone: '0000000000',
+  };
 
   const game: Game = {
     id: 1,
@@ -24,9 +27,8 @@ describe('GameController', () => {
     price: 100,
     tags: [],
     publisher: publisher,
-    releaseDate: '2021-11-20'
-  }
-
+    releaseDate: '2021-11-20',
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,16 +42,16 @@ describe('GameController', () => {
             create: jest.fn().mockReturnValue(game),
             update: jest.fn().mockReturnValue(game),
             delete: jest.fn().mockReturnValue(game),
-            retrievePublisherDataByGameId: jest.fn().mockReturnValue(publisher)
-          }
+            retrievePublisherDataByGameId: jest.fn().mockReturnValue(publisher),
+          },
         },
         {
           provide: GameProducerService,
           useValue: {
-            timeGameAdjustments: jest.fn()
-          }
-        }
-      ]
+            timeGameAdjustments: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<GameController>(GameController);
@@ -70,7 +72,7 @@ describe('GameController', () => {
       controller.list();
     } catch (error) {
       expect(error.status).toBe(500);
-      expect(error.message).toMatch('Internal Server Error')
+      expect(error.message).toMatch('Internal Server Error');
     }
   });
 
@@ -89,7 +91,7 @@ describe('GameController', () => {
     try {
       controller.list();
     } catch (error) {
-      expect(error.response.error).toMatch('Game does not exists')
+      expect(error.response.error).toMatch('Game does not exists');
       expect(error.status).toBe(404);
     }
   });
@@ -103,7 +105,7 @@ describe('GameController', () => {
       controller.findById(1);
     } catch (error) {
       expect(error.status).toBe(500);
-      expect(error.message).toMatch('Internal Server Error')
+      expect(error.message).toMatch('Internal Server Error');
     }
   });
 
@@ -128,7 +130,7 @@ describe('GameController', () => {
         releaseDate: '2021-06-12',
       });
     } catch (error) {
-      expect(error.response.error).toMatch('Publisher does not exists')
+      expect(error.response.error).toMatch('Publisher does not exists');
       expect(error.status).toBe(404);
     }
   });
@@ -148,7 +150,7 @@ describe('GameController', () => {
       });
     } catch (error) {
       expect(error.status).toBe(500);
-      expect(error.message).toMatch('Internal Server Error')
+      expect(error.message).toMatch('Internal Server Error');
     }
   });
 
@@ -180,7 +182,7 @@ describe('GameController', () => {
         releaseDate: '2021-06-12',
       });
     } catch (error) {
-      expect(error.response.error).toMatch('Game does not exists')
+      expect(error.response.error).toMatch('Game does not exists');
       expect(error.status).toBe(404);
     }
   });
@@ -201,7 +203,7 @@ describe('GameController', () => {
         releaseDate: '2021-06-12',
       });
     } catch (error) {
-      expect(error.response.error).toMatch('Publisher does not exists')
+      expect(error.response.error).toMatch('Publisher does not exists');
       expect(error.status).toBe(404);
     }
   });
@@ -221,7 +223,7 @@ describe('GameController', () => {
       });
     } catch (error) {
       expect(error.status).toBe(500);
-      expect(error.message).toMatch('Internal Server Error')
+      expect(error.message).toMatch('Internal Server Error');
     }
   });
 
@@ -247,7 +249,7 @@ describe('GameController', () => {
     try {
       controller.delete(1);
     } catch (error) {
-      expect(error.response.error).toMatch('Game does not exists')
+      expect(error.response.error).toMatch('Game does not exists');
       expect(error.status).toBe(404);
     }
   });
@@ -261,7 +263,7 @@ describe('GameController', () => {
       controller.delete(1);
     } catch (error) {
       expect(error.status).toBe(500);
-      expect(error.message).toMatch('Internal Server Error')
+      expect(error.message).toMatch('Internal Server Error');
     }
   });
 
@@ -272,30 +274,34 @@ describe('GameController', () => {
   });
 
   it('should return NotFound Exception when trying to get publisher info of a game that does not exists', () => {
-    jest.spyOn(service, 'retrievePublisherDataByGameId').mockImplementationOnce(() => {
-      throw new NotFoundException({
-        error: 'Game does not exists',
+    jest
+      .spyOn(service, 'retrievePublisherDataByGameId')
+      .mockImplementationOnce(() => {
+        throw new NotFoundException({
+          error: 'Game does not exists',
+        });
       });
-    });
 
     try {
       controller.getPublisherDataByGameId(1);
     } catch (error) {
-      expect(error.response.error).toMatch('Game does not exists')
+      expect(error.response.error).toMatch('Game does not exists');
       expect(error.status).toBe(404);
     }
   });
 
   it('should return InternalServerError when failing to delete a game', () => {
-    jest.spyOn(service, 'retrievePublisherDataByGameId').mockImplementationOnce(() => {
-      throw new InternalServerErrorException();
-    });
+    jest
+      .spyOn(service, 'retrievePublisherDataByGameId')
+      .mockImplementationOnce(() => {
+        throw new InternalServerErrorException();
+      });
 
     try {
       controller.delete(1);
     } catch (error) {
       expect(error.status).toBe(500);
-      expect(error.message).toMatch('Internal Server Error')
+      expect(error.message).toMatch('Internal Server Error');
     }
   });
 
@@ -314,7 +320,7 @@ describe('GameController', () => {
       await controller.invokePriceAdjustmentTask();
     } catch (error) {
       expect(error.status).toBe(500);
-      expect(error.message).toMatch('Internal Server Error')
+      expect(error.message).toMatch('Internal Server Error');
     }
   });
 
@@ -324,6 +330,6 @@ describe('GameController', () => {
     });
 
     const result = await controller.invokePriceAdjustmentTask();
-    expect(result).toBe('Task queued for process')
+    expect(result).toBe('Task queued for process');
   });
 });

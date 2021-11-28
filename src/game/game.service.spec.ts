@@ -16,8 +16,8 @@ describe('GameService', () => {
     id: 1,
     name: 'test',
     siret: 1,
-    phone: '0000000000'
-  }
+    phone: '0000000000',
+  };
 
   const game: Game = {
     id: 1,
@@ -25,10 +25,10 @@ describe('GameService', () => {
     price: 100,
     tags: [],
     publisher: publisher,
-    releaseDate: '2021-11-20'
-  }
+    releaseDate: '2021-11-20',
+  };
 
-  beforeEach(async () => {  
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         GameService,
@@ -51,13 +51,13 @@ describe('GameService', () => {
         {
           provide: PublisherService,
           useValue: {
-            findById: jest.fn().mockReturnValue(Promise.resolve(publisher))
-          }
+            findById: jest.fn().mockReturnValue(Promise.resolve(publisher)),
+          },
         },
         {
           provide: Logger,
-          useClass: Logger
-        }
+          useClass: Logger,
+        },
       ],
     }).compile();
 
@@ -79,13 +79,13 @@ describe('GameService', () => {
       await service.list();
     } catch (error) {
       expect(error.message).toMatch('Internal Server Error');
-      expect(error.status).toEqual(500)
+      expect(error.status).toEqual(500);
     }
   });
 
   it('should return a list of games', async () => {
     jest.spyOn(repo, 'find').mockImplementationOnce(() => {
-      return Promise.resolve([])
+      return Promise.resolve([]);
     });
 
     const games = await repo.find();
@@ -101,7 +101,7 @@ describe('GameService', () => {
       await service.findById(1);
     } catch (error) {
       expect(error.message).toMatch('Not Found');
-      expect(error.status).toEqual(404)
+      expect(error.status).toEqual(404);
     }
   });
 
@@ -114,13 +114,13 @@ describe('GameService', () => {
       await service.findById(1);
     } catch (error) {
       expect(error.message).toMatch('Internal Server Error');
-      expect(error.status).toEqual(500)
+      expect(error.status).toEqual(500);
     }
   });
 
   it('should return a game by id', async () => {
     jest.spyOn(repo, 'findOneOrFail').mockImplementationOnce(() => {
-      return Promise.resolve(game)
+      return Promise.resolve(game);
     });
 
     const gameFound = await service.findById(1);
@@ -138,11 +138,11 @@ describe('GameService', () => {
         price: 100,
         publisherId: 1,
         tags: [],
-        releaseDate: '2021-11-20'
+        releaseDate: '2021-11-20',
       });
     } catch (error) {
       expect(error.message).toMatch('Not Found');
-      expect(error.status).toEqual(404)
+      expect(error.status).toEqual(404);
     }
   });
 
@@ -157,11 +157,11 @@ describe('GameService', () => {
         price: 100,
         publisherId: 1,
         tags: [],
-        releaseDate: '2021-11-20'
+        releaseDate: '2021-11-20',
       });
     } catch (error) {
       expect(error.message).toMatch('Internal Server Error');
-      expect(error.status).toEqual(500)
+      expect(error.status).toEqual(500);
     }
   });
 
@@ -170,7 +170,7 @@ describe('GameService', () => {
       return Promise.resolve(publisher);
     });
     jest.spyOn(repo, 'create').mockImplementationOnce(() => {
-      return game
+      return game;
     });
     jest.spyOn(repo, 'save').mockImplementationOnce(() => {
       return Promise.resolve(game);
@@ -181,8 +181,8 @@ describe('GameService', () => {
       price: 100,
       publisherId: 1,
       tags: [],
-      releaseDate: '2021-11-20'
-    }
+      releaseDate: '2021-11-20',
+    };
 
     const gameCreated = await service.create(payloadGame);
 
@@ -200,7 +200,7 @@ describe('GameService', () => {
       });
     } catch (error) {
       expect(error.message).toMatch('Not Found');
-      expect(error.status).toEqual(404)
+      expect(error.status).toEqual(404);
     }
   });
 
@@ -215,11 +215,11 @@ describe('GameService', () => {
     try {
       await service.update(1, {
         price: 100,
-        publisherId: 1
+        publisherId: 1,
       });
     } catch (error) {
       expect(error.message).toMatch('Not Found');
-      expect(error.status).toEqual(404)
+      expect(error.status).toEqual(404);
     }
   });
 
@@ -228,7 +228,7 @@ describe('GameService', () => {
       return Promise.resolve(game);
     });
     jest.spyOn(repo, 'create').mockImplementationOnce(() => {
-      return game
+      return game;
     });
     jest.spyOn(repo, 'save').mockImplementationOnce(() => {
       throw new Error();
@@ -240,7 +240,7 @@ describe('GameService', () => {
       });
     } catch (e) {
       expect(e.message).toMatch('Internal Server Error');
-      expect(e.status).toEqual(500)
+      expect(e.status).toEqual(500);
     }
   });
 
@@ -249,7 +249,7 @@ describe('GameService', () => {
       return Promise.resolve(game);
     });
     jest.spyOn(repo, 'create').mockImplementationOnce(() => {
-      return game
+      return game;
     });
     jest.spyOn(repo, 'save').mockImplementationOnce(() => {
       return Promise.resolve(game);
@@ -271,7 +271,7 @@ describe('GameService', () => {
       await service.delete(1);
     } catch (error) {
       expect(error.message).toMatch('Not Found');
-      expect(error.status).toEqual(404)
+      expect(error.status).toEqual(404);
     }
   });
 
@@ -287,7 +287,7 @@ describe('GameService', () => {
       await service.delete(1);
     } catch (error) {
       expect(error.message).toMatch('Internal Server Error');
-      expect(error.status).toEqual(500)
+      expect(error.status).toEqual(500);
     }
   });
 
@@ -348,7 +348,7 @@ describe('GameService', () => {
 
     try {
       await service.deleteBasedOnCondition({
-        where: 'true = true'
+        where: 'true = true',
       });
     } catch (error) {
       expect(error.message).toMatch('Internal Server Error');
@@ -361,11 +361,11 @@ describe('GameService', () => {
       return Promise.resolve([game]);
     });
     jest.spyOn(repo, 'remove').mockImplementationOnce(() => {
-      return Promise.resolve(game)
+      return Promise.resolve(game);
     });
 
     const deletionSucceed = await service.deleteBasedOnCondition({
-      where: 'true = true'
+      where: 'true = true',
     });
 
     expect(deletionSucceed).toBe(game);
