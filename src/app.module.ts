@@ -26,7 +26,11 @@ import { BullModule } from '@nestjs/bull';
   }),
   BullModule.forRootAsync({
     useFactory: (configService: ConfigService) => {
-      return configService.get('redis');
+      return {
+        redis: {
+          ...configService.get('redis')
+        }
+      }
     },
     inject: [ConfigService],
   }),
