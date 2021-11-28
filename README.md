@@ -1,73 +1,155 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+<br />
+  <h1 align="center">Ultra coding test</h1>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<!-- TABLE OF CONTENTS -->
+<details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+      <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#built-with">Built With</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgements">Acknowledgements</a></li>
+  </ol>
+</details>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
-## Installation
+This repository contains the technical challange for a backend position in Ultra.
 
-```bash
-$ npm install
+### Features
+* CRUD for Games
+* Create a publisher
+* Retrieve only publisher information via game API
+* Task for deleting old games and disccounts in prices
+
+
+### Built With
+
+* [NestJS](https://nestjs.com)
+* [PostgreSQL](https://www.postgresql.org)
+* [Redis](https://redis.io)
+* [Docker](https://www.docker.com)
+
+
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+This is an example of how you may give instructions on setting up your project locally.
+To get a local copy up and running follow these simple example steps.
+
+### Prerequisites
+
+For running a local copy you need
+* [Docker](https://docs.docker.com/engine/install/ubuntu/)
+
+### Installation
+
+1. Clone the repo
+   ```sh
+   git clone git@github.com:Diezaztek/ultra-coding-test.git
+   ```
+2. Create a copy of the variables
+    ```sh
+    cp .env.example .env
+    ```
+3. Build the docker compose
+    ```sh
+    docker compose build
+    ```
+4. Run the containers
+    ```
+    docker compose up
+    ```
+5. Enter http://localhost:3000/api
+
+
+<!-- USAGE EXAMPLES -->
+## Usage
+
+For running the endpoints you can use tools such as [postman](https://www.postman.com). 
+
+For testing the functionality you can try the following flow:
+1. Create a publisher
+2. Create a game
+3. Update the game info
+4. Get all the games
+5. Get single game info
+6. Get publisher for a given game info
+7. Delete the game
+8. Create a game with a releaseDate older than 18 months
+9. Create a game with a releaseDate between 12 and 18 months old
+10. Run the task for adjusting the games
+11. Corroborate the info of the games listing them all again
+
+
+**NOTE**
+
+Do not forget the api version in the headers of your request (; If you feel lost take a look to the [swagger docs](https://localhost:3000/api)
+
+```sh
+curl --location --request GET 'localhost:3000/game' \
+--header 'API-VERSION: 1'
 ```
 
-## Running the app
+---
 
-```bash
-# development
-$ npm run start
 
-# watch mode
-$ npm run start:dev
+<!-- ROADMAP -->
+## Roadmap
 
-# production mode
-$ npm run start:prod
-```
+See the [open issues](https://github.com/Diezaztek/ultra-coding-test/issues) for a list of proposed features (and known issues).
 
-## Test
 
-```bash
-# unit tests
-$ npm run test
 
-# e2e tests
-$ npm run test:e2e
+<!-- CONTRIBUTING -->
+## Contributing
 
-# test coverage
-$ npm run test:cov
-```
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-## Support
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
+<!-- LICENSE -->
 ## License
 
-Nest is [MIT licensed](LICENSE).
+Distributed under the MIT License. See `LICENSE` for more information.
+
+
+
+<!-- CONTACT -->
+## Contact
+
+Francisco Torres - [@pacotorres3](https://www.linkedin.com/in/pacotorres3/) - paco.tcast@gmail.com
+
+Project Link: [https://github.com/Diezaztek/ultra-coding-test](https://github.com/Diezaztek/ultra-coding-test)
+
+
+
+<!-- ACKNOWLEDGEMENTS -->
+## Acknowledgements
+* [Best-README-Template](https://github.com/othneildrew/Best-README-Template/blob/master/README.md)
