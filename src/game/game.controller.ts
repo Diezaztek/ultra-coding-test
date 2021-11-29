@@ -6,6 +6,7 @@ import {
   Body,
   Param,
   Controller,
+  ParseIntPipe,
 } from '@nestjs/common';
 import {
   ApiOperation,
@@ -73,14 +74,14 @@ export class GameController {
   @Put('/:id')
   @ApiOperation({ description: 'Update game information' })
   @ApiOkResponse({ type: Game })
-  update(@Param('id') id: number, @Body() body: UpdateGameDto): Promise<Game> {
+  update(@Param('id', new ParseIntPipe()) id: number, @Body() body: UpdateGameDto): Promise<Game> {
     return this.gameService.update(id, body);
   }
 
   @Delete('/:id')
   @ApiOperation({ description: 'Delete a game' })
   @ApiOkResponse({ type: Game })
-  delete(@Param('id') id: number): Promise<Game> {
+  delete(@Param('id', new ParseIntPipe()) id: number): Promise<Game> {
     return this.gameService.delete(id);
   }
 }
